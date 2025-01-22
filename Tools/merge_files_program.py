@@ -1,51 +1,55 @@
+"""
+This script merges the PDF files selected by the user into a single document
+"""
+
 import PyPDF2
 import os
 import tkinter as tk
 from tkinter import filedialog
 
-# Oculta la ventana principal de Tkinter
+# Hide the main window
 root = tk.Tk()
 root.withdraw()
 
-# Ventana emergente para seleccionar los archivos PDF
+# Window for selecting PDF files to merge
 pdf_paths = filedialog.askopenfilenames(
-    title="Selecciona los archivos PDF a unir",
-    filetypes=[("Archivos PDF", "*.pdf")]
+    title="Select PDF files for merge",
+    filetypes=[("PDF Files", "*.pdf")]
 )
 
 if not pdf_paths:
-    print("No seleccionaste ningún archivo. El proceso ha terminado.")
+    print("You didn't select any files. The process has finished.")
     exit()
 
-# Ventana emergente para guardar el archivo con nombre personalizado
+# Window for saving the new combined PDF file with a custom name "Save combined PDF file as"
 output_filename = filedialog.asksaveasfilename(
     initialdir=os.path.join(os.path.expanduser("~"), "Downloads"),
-    title="Guardar PDF combinado como",
+    title="Save combined PDF file as",
     defaultextension=".pdf",
-    filetypes=[("Archivos PDF", "*.pdf")]
+    filetypes=[("PDF Files", "*.pdf")]
 )
 
 if not output_filename:
-    print("No seleccionaste un nombre para el archivo. El proceso ha terminado.")
+    print("You didn't select a name for the file. The process has finished.")
     exit()
 
-# Crear un PdfWriter para combinar las páginas
+# Create a PdfWriter to combine pages
 pdf_writer = PyPDF2.PdfWriter()
 
-# Agregar las páginas de los PDFs seleccionados en el orden elegido
+# Add pages from selected PDF files in the chosen order
 for pdf_path in pdf_paths:
     try:
         pdf_reader = PyPDF2.PdfReader(pdf_path)
         for page_num in range(len(pdf_reader.pages)):
             pdf_writer.add_page(pdf_reader.pages[page_num])
-        print(f"Agregado: {os.path.basename(pdf_path)}")
+        print(f"Added: {os.path.basename(pdf_path)}")
     except Exception as e:
-        print(f"Error al procesar '{os.path.basename(pdf_path)}': {e}")
+        print(f"Error processing '{os.path.basename(pdf_path)}': {e}")
 
-# Guardar el PDF combinado con el nombre especificado por el usuario
+# Save the combined PDF file with the user-specified name 
 with open(output_filename, "wb") as output_file:
     pdf_writer.write(output_file)
 
-print(f"PDF combinado guardado en: {output_filename}")
-print("Proceso completado.")
-
+print(f"Combined PDF saved at: {output_filename}")  
+print("Process completed.")
+ 
