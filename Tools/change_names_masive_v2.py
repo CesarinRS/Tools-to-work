@@ -1,59 +1,74 @@
+"""
+This script has been created because im needed change very much names in sub-folders in main folder
+"""
+
 import os
 import shutil
 
-def renombrar_jpg(contador):
+def rename_jpg(accountant):
+    # JPG file has been renamed of "Picture" with accounting between only if necesary  
     # Renombra el archivo JPG a "Foto" seguido del contador si es necesario
-    return f"Foto({contador})" if contador > 1 else "Foto"
+    return f"Picture({accountant})" if accountant > 1 else "Picture"
 
-def renombrar_pdf(nombre):
+def rename_pdf(name):
     # Divide el nombre en palabras
-    partes = nombre.split()
+    parts = name.split()
     # Si el nombre tiene 3 palabras o menos, lo deja como está
-    if len(partes) <= 3:
-        nombre_renombrado = nombre
+    
+    if len(parts) <= 3:
+        name_renamed = name
     else:
+        # If have more 3 words apply then name first, second and last
         # Si tiene más de 3 palabras, usa las primeras dos y la última
-        nombre_renombrado = f"{partes[0]}_{partes[1]}_{partes[-1]}"
-    return nombre_renombrado
+        name_renamed = f"{parts[0]}_{parts[1]}_{parts[-1]}"
+    return name_renamed
 
-def procesar_archivos(origen, destino):
+def files_processor(origin, destiny):
+    # Accountant for JPG files
     # Contador para archivos JPG
-    contador_jpg = 1
+    accountant_jpg = 1
 
-    for root, _, files in os.walk(origen):
+    for root, _, files in os.walk(origin):
         # Obtener la ruta relativa de la carpeta actual respecto a la raíz
-        ruta_relativa = os.path.relpath(root, origen)
+        # Regarding of the root, get the relative rute of folder selected 
+        relative_rute = os.path.relpath(root, origin)
 
         # Crear la estructura de carpetas en el destino sin renombrar
-        carpeta_destino = os.path.join(destino, ruta_relativa)
-        os.makedirs(carpeta_destino, exist_ok=True)
+        # Structure destiny folder are create hasn't rename
+        destiny_folder = os.path.join(destiny, relative_rute)
+        os.makedirs(destiny_folder, exist_ok=True)
 
         for file in files:
-            ruta_original = os.path.join(root, file)
-            nombre_sin_ext, extension = os.path.splitext(file)
+            origin_rute = os.path.join(root, file)
+            name_without_ext, extension = os.path.splitext(file)
 
             # Renombrar y copiar archivos JPG
+            # JPG files are renamed and copy
             if file.lower().endswith(('.jpg', '.jpeg')):
-                nuevo_nombre = renombrar_jpg(contador_jpg) + extension
-                ruta_destino = os.path.join(carpeta_destino, nuevo_nombre)
-                contador_jpg += 1
+                new_name = rename_jpg(accountant_jpg) + extension
+                destiny_rute = os.path.join(destiny_folder, new_name)
+                accountant_jpg += 1
 
             # Renombrar y copiar archivos PDF
+            # PDF files are renamed and copy
             elif file.lower().endswith('.pdf'):
-                nuevo_nombre = renombrar_pdf(nombre_sin_ext) + extension
-                ruta_destino = os.path.join(carpeta_destino, nuevo_nombre)
+                nuevo_nombre = rename_pdf(name_without_ext) + extension
+                destiny_rute = os.path.join(destiny_folder, nuevo_nombre)
 
             else:
                 # Si el archivo no es JPG o PDF, mantener su nombre original
-                ruta_destino = os.path.join(carpeta_destino, file)
+                # Name stay the same if file isn't JPG or PDF
+                destiny_rute = os.path.join(destiny_folder, file)
 
             # Copia el archivo a la ruta de destino con el nombre modificado o sin modificar según corresponda
-            shutil.copy2(ruta_original, ruta_destino)
-            print(f"Archivo copiado: {ruta_destino}")
+            # Copy the file and sent on the destiny rute, with the modified name or same
+            shutil.copy2(origin_rute, destiny_rute)
+            print(f"copied file: {destiny_rute}")
 
-# Rutas de origen y destino (ajusta las rutas según necesites)
-ruta_origen = "C:\\Users\\auxmatla\\Downloads\\Requerimiento Septiembre\\completo"
-ruta_destino = "C:\\Users\\auxmatla\\Downloads\\prueba 1"
+# Rutas de origen y destino
+# Origin and destiny rutes
+origin_rute = os.path.join()
+destiny_rute = os.path.join()
 
-# Ejecuta la función
-procesar_archivos(ruta_origen, ruta_destino)
+# Function execute
+files_processor(origin_rute, destiny_rute)
