@@ -1,8 +1,13 @@
+"""
+This scripts rotate PDF files 
+"""
+
 import PyPDF2
 import os
 import tkinter as tk
 from tkinter import filedialog, simpledialog
 
+# Hide the main tkinter window
 # Oculta la ventana principal de Tkinter
 root = tk.Tk()
 root.withdraw()

@@ -1,101 +1,106 @@
+"""
+This script replaces a page in a PDF file with another one.
+"""
+
 import PyPDF2
 import os
 import tkinter as tk
 from tkinter import filedialog, simpledialog
 
-# Oculta la ventana principal de Tkinter
+# Hide the main Tkinter window
 root = tk.Tk()
 root.withdraw()
 
-# Seleccionar el archivo PDF principal
+# Select the main PDF file
 main_pdf_path = filedialog.askopenfilename(
-    title="Selecciona el archivo PDF principal",
-    filetypes=[("Archivos PDF", "*.pdf")]
+    title="Select the main PDF file",
+    filetypes=[("PDF files", "*.pdf")]
 )
 
 if not main_pdf_path:
-    print("No seleccionaste ningún archivo. El proceso ha terminado.")
+    print("No file selected. The process has finished.")
     exit()
 
 try:
-    # Leer el archivo PDF principal
+    # Read the main PDF file
     pdf_reader = PyPDF2.PdfReader(main_pdf_path)
     total_pages = len(pdf_reader.pages)
 
-    # Pedir al usuario el número de la página que desea reemplazar
+    # Prompt the user to select the page number to replace
     page_to_replace = simpledialog.askinteger(
-        "Página a reemplazar",
-        f"Selecciona el número de la página a reemplazar (1-{total_pages}):",
+        "Page to Replace",
+        f"Select the page number to replace (1-{total_pages}):",
         minvalue=1,
         maxvalue=total_pages
     )
 
     if not page_to_replace:
-        print("No seleccionaste ninguna página. El proceso ha terminado.")
+        print("No page selected. The process has finished.")
         exit()
 
-    page_to_replace_index = page_to_replace - 1  # Ajustar índice (0 basado)
+    page_to_replace_index = page_to_replace - 1  # Adjust to zero-based index
 
-    # Seleccionar el archivo PDF que contiene la nueva página
+    # Select the replacement PDF file
     replacement_pdf_path = filedialog.askopenfilename(
-        title="Selecciona el archivo PDF que contiene la nueva página",
-        filetypes=[("Archivos PDF", "*.pdf")]
+        title="Select the replacement PDF file",
+        filetypes=[("PDF files", "*.pdf")]
     )
 
     if not replacement_pdf_path:
-        print("No seleccionaste ningún archivo de reemplazo. El proceso ha terminado.")
+        print("No replacement file selected. The process has finished.")
         exit()
 
-    # Leer el archivo PDF de reemplazo
+    # Read the replacement PDF file
     replacement_pdf_reader = PyPDF2.PdfReader(replacement_pdf_path)
     replacement_total_pages = len(replacement_pdf_reader.pages)
 
-    # Seleccionar la página del archivo de reemplazo
+    # Prompt the user to select the replacement page
     replacement_page = simpledialog.askinteger(
-        "Seleccionar nueva página",
-        f"Selecciona el número de la página del archivo de reemplazo (1-{replacement_total_pages}):",
+        "Select Replacement Page",
+        f"Select the page number to use as replacement (1-{replacement_total_pages}):",
         minvalue=1,
         maxvalue=replacement_total_pages
     )
 
     if not replacement_page:
-        print("No seleccionaste ninguna página del archivo de reemplazo. El proceso ha terminado.")
+        print("No replacement page selected. The process has finished.")
         exit()
 
-    replacement_page_index = replacement_page - 1  # Ajustar índice (0 basado)
+    replacement_page_index = replacement_page - 1  # Adjust to zero-based index
 
-    # Crear un PdfWriter para construir el nuevo archivo
+    # Create a PdfWriter to build the modified PDF
     pdf_writer = PyPDF2.PdfWriter()
 
-    # Añadir todas las páginas del archivo principal, reemplazando la seleccionada
+    # Add all pages from the main PDF, replacing the selected page
     for i in range(total_pages):
         if i == page_to_replace_index:
-            # Añadir la página de reemplazo
+            # Add the replacement page
             pdf_writer.add_page(replacement_pdf_reader.pages[replacement_page_index])
-            print(f"Sustituida la página {page_to_replace} del archivo principal.")
+            print(f"Page {page_to_replace} in the main file has been replaced.")
         else:
-            # Añadir la página original
+            # Add the original page
             pdf_writer.add_page(pdf_reader.pages[i])
 
-    # Guardar el archivo modificado con un nombre personalizado
+    # Save the modified file with a custom name
     base_name = os.path.splitext(os.path.basename(main_pdf_path))[0]
     output_filename = filedialog.asksaveasfilename(
-        initialfile=f"{base_name}_modificado.pdf",
-        title="Guardar archivo modificado como",
+        initialfile=f"{base_name}_modified.pdf",
+        title="Save Modified File As:",
         defaultextension=".pdf",
-        filetypes=[("Archivos PDF", "*.pdf")]
+        filetypes=[("PDF files", "*.pdf")]
     )
 
     if not output_filename:
-        print("No se guardó el archivo modificado.")
+        print("The modified file wasn't saved.")
         exit()
 
     with open(output_filename, "wb") as output_file:
         pdf_writer.write(output_file)
 
-    print(f"Archivo modificado guardado: {output_filename}")
+    print(f"The modified file has been saved as: {output_filename}")
 
 except Exception as e:
-    print(f"Error al procesar los archivos: {e}")
+    print(f"Processing error: {e}")
 
-print("Proceso completado.")
+print("Process completed successfully.")
+
